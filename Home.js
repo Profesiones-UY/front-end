@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import Profile from './Profile';
 
 const users = [
@@ -151,10 +151,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
+    marginBottom: 40,
   },
   navItem: {
     flex: 1,
@@ -167,5 +164,8 @@ const styles = StyleSheet.create({
   navTextActive: {
     color: '#2196F3',
     fontWeight: 'bold',
+  },
+  safeArea: {
+    backgroundColor: '#fff',
   },
 });

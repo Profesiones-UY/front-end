@@ -127,10 +127,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
+    marginBottom: 40,
   },
   navItem: {
     flex: 1,
