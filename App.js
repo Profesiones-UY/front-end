@@ -7,6 +7,7 @@ import Profile from './Profile';
 import ProfileUser from './ProfileUser';
 import Search from './Search';
 import Messages from './Messages';
+import Chat from './Chats';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
         <Stack.Screen name="ProfileUser" component={ProfileUser} />
         <Stack.Screen name="Search" component={Search} />
         <Stack.Screen name="Messages" component={Messages} />
+        <Stack.Screen name="Chat" component={Chat} />
       </Stack.Navigator>
     </NavigationContainer>
   );

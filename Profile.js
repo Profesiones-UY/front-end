@@ -27,6 +27,12 @@ export default function Profile({ route, navigation }) {
           <Text style={styles.userName}>{name}</Text>
           <Text style={styles.userProf}>{profession}</Text>
         </View>
+        <TouchableOpacity
+          style={styles.contactButton}
+          onPress={() => navigation.navigate('Messages')}
+        >
+          <Text style={styles.contactButtonText}>Contactar</Text>
+        </TouchableOpacity>
       </View>
       {/* Grid de imágenes */}
       <FlatList
@@ -97,7 +103,7 @@ const styles = StyleSheet.create({
     color: '#222',
   },
   userProf: {
-    fontSize: 16,
+    fontSize: 13,
     color: '#444',
   },
   grid: {
@@ -140,5 +146,17 @@ const styles = StyleSheet.create({
   navTextActive: {
     color: '#2196F3',
     fontWeight: 'bold',
+  },
+  contactButton: {
+    backgroundColor: '#42a5f5',
+    paddingVertical: 8,
+    paddingHorizontal: 18,
+    borderRadius: 6,
+    marginLeft: 'auto',
+  },
+  contactButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

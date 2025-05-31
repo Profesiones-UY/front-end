@@ -1,39 +1,50 @@
-import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, FlatList } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-const messages = [
-  { id: 1, user: 'Jane Doe', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png', align: 'right' },
-  { id: 2, user: 'User1', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png', align: 'left' },
-  { id: 3, user: 'Jane Doe', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png', align: 'right' },
-  { id: 4, user: 'User2', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png', align: 'left' },
-  { id: 5, user: 'Jane Doe', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png', align: 'right' },
-  { id: 6, user: 'User3', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png', align: 'left' },
+const chats = [
+  { id: '1', name: 'Jane Doe', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png' },
+  { id: '2', name: 'Juan Perez', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png' },
+  { id: '3', name: 'Ana Lopez', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png' },
+  { id: '4', name: 'Carlos Ruiz', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png' },
+  { id: '5', name: 'Maria Gomez', avatar: 'https://img.icons8.com/ios-filled/100/cccccc/user-male-circle.png' },
 ];
 
 export default function Messages({ navigation }) {
+  const [search, setSearch] = useState('');
+
+  const filteredChats = chats.filter(chat =>
+    chat.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity style={styles.chatRow} onPress={() => navigation.navigate('Chat', { user: item.name })}>
+      <Image source={{ uri: item.avatar }} style={styles.avatar} />
+      <Text style={styles.chatName}>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.backText}>Back</Text>
-        </TouchableOpacity>
+      {/* Título */}
+      <Text style={styles.title}>Messages</Text>
+      {/* Buscador */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Buscar chat..."
+          value={search}
+          onChangeText={setSearch}
+        />
       </View>
-      {/* Avatar y nombre */}
-      <View style={styles.avatarContainer}>
-        <Image source={{ uri: messages[0].avatar }} style={styles.avatar} />
-        <Text style={styles.name}>Jane Doe</Text>
-      </View>
-      {/* Mensajes */}
-      <ScrollView contentContainerStyle={styles.messagesContainer} showsVerticalScrollIndicator={false}>
-        {messages.map((msg, idx) => (
-          <View key={msg.id} style={[styles.messageRow, msg.align === 'right' ? styles.right : styles.left]}>
-            {msg.align === 'left' && <Image source={{ uri: msg.avatar }} style={styles.msgAvatar} />}
-            <View style={styles.bubble} />
-            {msg.align === 'right' && <Image source={{ uri: msg.avatar }} style={styles.msgAvatar} />}
-          </View>
-        ))}
-      </ScrollView>
+      {/* Lista de chats */}
+      <FlatList
+        data={filteredChats}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+      />
       {/* Barra de navegación inferior */}
       <View style={styles.navBar}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
@@ -53,68 +64,58 @@ export default function Messages({ navigation }) {
   );
 }
 
-const { width } = Dimensions.get('window');
-const bubbleWidth = width * 0.6;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ededed',
   },
-  header: {
-    paddingTop: 40,
-    paddingBottom: 10,
-    paddingHorizontal: 10,
-    backgroundColor: '#ededed',
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginTop: 24,
+    marginBottom: 8,
+    marginLeft: 16,
   },
-  backText: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+    height: 44,
+  },
+  input: {
+    flex: 1,
     fontSize: 16,
     color: '#222',
   },
-  avatarContainer: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#fff',
-    marginBottom: 6,
-  },
-  name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#222',
-    marginBottom: 10,
-  },
-  messagesContainer: {
-    paddingHorizontal: 16,
+  listContent: {
+    paddingHorizontal: 8,
     paddingBottom: 70,
   },
-  messageRow: {
+  chatRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 18,
-  },
-  left: {
-    justifyContent: 'flex-start',
-  },
-  right: {
-    justifyContent: 'flex-end',
-  },
-  msgAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
     backgroundColor: '#fff',
-    marginHorizontal: 8,
+    borderRadius: 6,
+    marginBottom: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    elevation: 1,
   },
-  bubble: {
-    width: bubbleWidth,
-    height: 60,
-    backgroundColor: '#fff',
-    borderRadius: 24,
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#ccc',
+    marginRight: 12,
+  },
+  chatName: {
+    fontSize: 18,
+    color: '#222',
+    fontWeight: 'bold',
   },
   navBar: {
     flexDirection: 'row',
