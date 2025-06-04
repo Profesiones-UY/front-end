@@ -48,7 +48,7 @@ export default function Login({ navigation }) {
       </TouchableOpacity>
       {/* Links */}
       <View style={styles.linksContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.registerText}>Registrarse</Text>
         </TouchableOpacity>
         <TouchableOpacity>

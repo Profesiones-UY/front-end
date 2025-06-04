@@ -8,6 +8,7 @@ import ProfileUser from './ProfileUser';
 import Search from './Search';
 import Messages from './Messages';
 import Chat from './Chats';
+import SignUp from './SignUp';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="ProfileUser" component={ProfileUser} />
