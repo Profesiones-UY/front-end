@@ -3,6 +3,35 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'reac
 
 export default function Login({ navigation }) {
   const [selectedTab, setSelectedTab] = useState('Usuario');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const validateEmail = (email) => {
+    return email.includes('@') && email.includes('.');
+  };
+
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+    return regex.test(password);
+  };
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      setError('Por favor completa todos los campos.');
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError('El correo electrónico no es válido.');
+      return;
+    }
+    if (!validatePassword(password)) {
+      setError('La contraseña debe tener al menos 8 caracteres, mayúscula, minúscula, número y algun carácter especial.');
+      return;
+    }
+    setError('');
+    navigation.navigate('Home');
+  };
 
   return (
     <View style={styles.container}>
@@ -35,15 +64,20 @@ export default function Login({ navigation }) {
         style={styles.input}
         placeholder="Email"
         placeholderTextColor="#888"
+        value={email}
+        onChangeText={setEmail}
       />
       <TextInput
         style={styles.input}
         placeholder="Contraseña"
         placeholderTextColor="#888"
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
+      {error ? <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text> : null}
       {/* Botón Ingresar */}
-      <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Ingresar</Text>
       </TouchableOpacity>
       {/* Links */}
@@ -51,7 +85,7 @@ export default function Login({ navigation }) {
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.registerText}>Registrarse</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
           <Text style={styles.forgotText}>Forgot password</Text>
         </TouchableOpacity>
       </View>

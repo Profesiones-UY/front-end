@@ -9,6 +9,7 @@ import Search from './Search';
 import Messages from './Messages';
 import Chat from './Chats';
 import SignUp from './SignUp';
+import ForgotPassword from './ForgotPassword';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
         <Stack.Screen name="Search" component={Search} />
         <Stack.Screen name="Messages" component={Messages} />
         <Stack.Screen name="Chat" component={Chat} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -9,19 +9,33 @@ const SignUp = ({ navigation }) => {
   const [rePassword, setRePassword] = useState('');
   const [error, setError] = useState('');
 
+  const validateEmail = (email) => {
+    return email.includes('@') && email.includes('.');
+  };
+
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+    return regex.test(password);
+  };
+
   const handleSignUp = () => {
-    // Validación básica
     if (!firstName || !lastName || !email || !password || !rePassword) {
       setError('Por favor completa todos los campos.');
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError('El correo electrónico no es válido.');
+      return;
+    }
+    if (!validatePassword(password)) {
+      setError('La contraseña debe tener al menos 8 caracteres, mayúscula, minúscula, número y algun carácter especial.');
       return;
     }
     if (password !== rePassword) {
       setError('Las contraseñas no coinciden.');
       return;
     }
-    // Aquí podrías agregar más validaciones (email válido, etc)
     setError('');
-    // Simula registro exitoso y vuelve a Login
     navigation.navigate('Login');
   };
 

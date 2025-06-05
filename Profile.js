@@ -52,10 +52,10 @@ export default function Profile({ route, navigation }) {
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
           <Text style={styles.navText}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Messages')}>
           <Text style={styles.navText}>Messages</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Search')}>
           <Text style={styles.navText}>Search</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('ProfileUser')}>
