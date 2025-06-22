@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useUser } from './UserContext';
 import Profile from './Profile';
 import AbogadoIcono from './assets/IMG/icono1abogado.png';
 import AbogadoFondo from './assets/IMG/Estudios-de-abogados-mas-reconocidos-en-Montevideo.jpg';
@@ -7,13 +8,12 @@ import ArquitectoIcono from './assets/IMG/ArquitectoIcono.png';
 import ArquitectoFondo from './assets/IMG/ArquitectoFondo.jpg';
 import { API_ENDPOINTS } from './config/api';
 
-export default function Home({ navigation, route }) {
+export default function Home({ navigation }) {
   const [professionals, setProfessionals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  // Recibir datos del usuario logueado
-  const user = route?.params?.user || null;
-  const token = route?.params?.token || null;
+  
+  const { user, logout } = useUser();
 
   useEffect(() => {
     const fetchProfessionals = async () => {
@@ -67,15 +67,21 @@ export default function Home({ navigation, route }) {
     );
   };
 
+  const handleLogout = () => {
+    logout();
+    navigation.navigate('Login');
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.headerRow}>
-        <Text style={styles.greeting}>¡Hola!</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.logoutButton}>
+        <Text style={styles.greeting}>¡Hola, {user?.nombre || ''}!</Text>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
           <Text style={styles.logoutText}>Log out</Text>
         </TouchableOpacity>
       </View>
+
       {/* Lista de profesionales */}
       {loading ? (
         <ActivityIndicator size="large" color="#2196F3" style={{ marginTop: 40 }} />
@@ -100,7 +106,7 @@ export default function Home({ navigation, route }) {
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Search')}>
           <Text style={styles.navText}>Search</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('ProfileUser', { user, token })}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('ProfileUser')}>
           <Text style={styles.navText}>Profile</Text>
         </TouchableOpacity>
       </View>

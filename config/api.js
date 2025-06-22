@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://127.0.0.1:4000/api';
+const API_BASE_URL = 'http://192.168.1.13:4000/api';
 
 export const API_ENDPOINTS = {
     auth: {
@@ -9,7 +9,14 @@ export const API_ENDPOINTS = {
     profiles: {
         profesionales: `${API_BASE_URL}/profiles/profesionales`,
         clientes: `${API_BASE_URL}/profiles/clientes`,
-        profesional: (id) => `${API_BASE_URL}/profiles/profesional/${id}`
+        profesional: (id) => `${API_BASE_URL}/profiles/profesional/${id}`,
+        buscarProfesionales: `${API_BASE_URL}/profiles/profesionales/buscar`
+    },
+    connections: {
+        crear: `${API_BASE_URL}/connections/crear`,
+        cliente: (clienteId) => `${API_BASE_URL}/connections/cliente/${clienteId}`,
+        verificar: `${API_BASE_URL}/connections/verificar`,
+        eliminar: (connectionId) => `${API_BASE_URL}/connections/${connectionId}`
     }
 };
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { API_ENDPOINTS } from './config/api';
+import { useUser } from './UserContext';
 
 export default function Login({ navigation }) {
   const [selectedTab, setSelectedTab] = useState('Usuario');
@@ -8,6 +9,7 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useUser();
 
   const validateEmail = (email) => {
     return email.includes('@') && email.includes('.');
@@ -45,8 +47,20 @@ export default function Login({ navigation }) {
       if (!response.ok) {
         throw new Error(data.mensaje || 'Usuario o contraseña incorrectos');
       }
-      // Guardar datos del usuario y tipo
-      navigation.navigate('Home', { user: data.data.usuario, token: data.data.token });
+      
+      // Guardar datos del usuario en el contexto
+      console.log('Datos del usuario recibidos:', data.data.usuario);
+      console.log('Token recibido:', data.data.token);
+      
+      login({
+        ...data.data.usuario,
+        token: data.data.token
+      });
+      
+      console.log('Usuario guardado en contexto');
+      
+      // Navegar a Home
+      navigation.navigate('Home');
     } catch (error) {
       setError(error.message || 'Error al iniciar sesión');
     } finally {

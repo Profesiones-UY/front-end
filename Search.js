@@ -1,38 +1,69 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, Image, Dimensions } from 'react-native';
-
-const users = [
-  { id: '1', name: 'Dan Williams', professions: 'Plomero Montevideo', avatar: null },
-  { id: '2', name: 'Karen Han', professions: 'Arquitecto, Comercial', avatar: null },
-  { id: '3', name: 'Juan Perez', professions: 'Plomero Montevideo', avatar: null },
-  { id: '4', name: 'Ana Lopez', professions: 'Electricista', avatar: null },
-  { id: '5', name: 'Carlos Ruiz', professions: 'Plomero Montevideo', avatar: null },
-  { id: '6', name: 'Maria Gomez', professions: 'Gasista', avatar: null },
-];
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, Image, Dimensions, Alert } from 'react-native';
+import { API_ENDPOINTS } from './config/api';
 
 export default function Search({ navigation }) {
   const [query, setQuery] = useState('');
+  const [professionals, setProfessionals] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Filtra usuarios según el texto ingresado
-  const filteredUsers = users.filter(
-    u =>
-      u.name.toLowerCase().includes(query.toLowerCase()) ||
-      u.professions.toLowerCase().includes(query.toLowerCase())
-  );
+  // Función para buscar profesionales en el backend
+  const searchProfessionals = async (searchTerm) => {
+    if (!searchTerm.trim()) {
+      setProfessionals([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_ENDPOINTS.profiles.buscarProfesionales}?profesion=${encodeURIComponent(searchTerm)}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setProfessionals(data.data);
+      } else {
+        Alert.alert('Error', data.mensaje || 'Error al buscar profesionales');
+        setProfessionals([]);
+      }
+    } catch (error) {
+      console.error('Error al buscar profesionales:', error);
+      Alert.alert('Error', 'No se pudo conectar con el servidor');
+      setProfessionals([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Efecto para buscar cuando cambia la query (con debounce)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      searchProfessionals(query);
+    }, 500); // Espera 500ms después de que el usuario deje de escribir
+
+    return () => clearTimeout(timeoutId);
+  }, [query]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
       onPress={() => navigation.navigate('Profile', {
-        name: item.name,
-        profession: item.professions,
+        id: item._id,
+        name: `${item.nombre} ${item.apellido}`,
+        profession: item.profesion,
         avatar: item.avatar,
+        rating: item.promedioCalificacion,
+        experience: item.experiencia
       })}
     >
       <Image
         source={{ uri: 'https://img.icons8.com/ios-filled/50/cccccc/user-male-circle.png' }}
         style={styles.avatar}
       />
+      <Text style={styles.professionalName}>{item.nombre} {item.apellido}</Text>
+      <Text style={styles.professionText}>{item.profesion}</Text>
+      {item.promedioCalificacion > 0 && (
+        <Text style={styles.ratingText}>⭐ {item.promedioCalificacion.toFixed(1)}</Text>
+      )}
       <Image
         source={{ uri: 'https://img.icons8.com/ios-filled/200/cccccc/picture.png' }}
         style={styles.mainImage}
@@ -50,21 +81,39 @@ export default function Search({ navigation }) {
         <Text style={styles.searchLabel}>Search</Text>
         <TextInput
           style={styles.input}
-          placeholder="Plomero Montevideo..."
+          placeholder="Buscar por profesión (ej: Plomero, Arquitecto)..."
           value={query}
           onChangeText={setQuery}
         />
       </View>
-      {/* Suggestions */}
-      <Text style={styles.suggestionsLabel}>Suggestions</Text>
-      <FlatList
-        data={filteredUsers}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        numColumns={2}
-        contentContainerStyle={styles.grid}
-        showsVerticalScrollIndicator={false}
-      />
+      
+      {/* Loading indicator */}
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Buscando profesionales...</Text>
+        </View>
+      )}
+      
+      {/* Results */}
+      {!loading && (
+        <>
+          <Text style={styles.suggestionsLabel}>
+            {professionals.length > 0 
+              ? `${professionals.length} profesional(es) encontrado(s)` 
+              : query.trim() ? 'No se encontraron profesionales' : 'Ingresa una profesión para buscar'
+            }
+          </Text>
+          <FlatList
+            data={professionals}
+            renderItem={renderItem}
+            keyExtractor={item => item._id}
+            numColumns={2}
+            contentContainerStyle={styles.grid}
+            showsVerticalScrollIndicator={false}
+          />
+        </>
+      )}
+      
       {/* Barra de navegación inferior */}
       <View style={styles.navBar}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
@@ -172,5 +221,33 @@ const styles = StyleSheet.create({
   navTextActive: {
     color: '#2196F3',
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#222',
+  },
+  professionalName: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#222',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  professionText: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  ratingText: {
+    fontSize: 12,
+    color: '#FFD700',
+    textAlign: 'center',
+    marginBottom: 4,
   },
 });
